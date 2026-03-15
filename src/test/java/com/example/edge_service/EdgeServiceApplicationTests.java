@@ -1,5 +1,6 @@
 package com.example.edge_service;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -26,6 +27,11 @@ public class EdgeServiceApplicationTests {
 
     @Test
     void contextLoads() {
+    }
+
+    @AfterAll
+    static void cleanup() {
+        redis.close();
     }
 
 }

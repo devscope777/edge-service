@@ -16,6 +16,8 @@ public class WebEndpoints {
     RouterFunction<ServerResponse> routerFunction() {
         return RouterFunctions.route()
                 .GET("/catalog-fallback", request -> ServerResponse.ok().body(Mono.just(""), String.class))
-                .POST("catalog-fallback", req -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).build()).build();
+                .POST("/catalog-fallback",
+                        request -> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).build())
+                .build();
     }
 }
