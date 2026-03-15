@@ -1,16 +1,98 @@
 server:
   port: 9000
+  netty:
+    connection-timeout: 2s
+  shutdown: graceful
+
 spring:
   application:
     name: edge-service
-  security:
-    oauth2:
-      client:
-        registration:
-          keycloak:
-            client-id: edge-service
-            client-secret: polar-keycloak-secret
-            scope: openid
-        provider:
-          keycloak:
-            issuer-uri: ${KEYCLOAK_URL:http://localhost:8081}/realms/PolarBookshop
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
+  session:
+    store-type: redis
+    timeout: 10m
+    redis:
+      namespace: polar:edge
+  data:
+    redis:
+      connect-timeout: 2s
+      host: localhost
+      port: 6379
+      timeout: 500ms
+  cloud:
+    gateway:
+      server:
+        webflux:
+          redis-rate-limiter:
+            include-headers: false
+          default-filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+            - name: Retry
+              args:
+                retries: 3
+                methods: GET
+                series: SERVER_ERROR
+                exceptions: java.io.IOException, java.util.concurrent.TimeoutException
+                backoff:
+                  firstBackoff: 50ms
+                  maxBackoff: 500ms
+                  factor: 2
+                  basedOnPreviousValue: false
+          httpclient:
+            connect-timeout: 5000
+            response-timeout: 5s
+            pool:
+              type: elastic
+              max-idle-time: 15s
+              max-life-time: 60s
+          routes:
+            - id: catalog-route
+              uri: ${CATALOG_SERVICE_URL:http://localhost:9001}/books
+              predicates:
+                - Path=/books/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: catalogCircuitbreaker
+                    fallbackUri: forward:/catalog-fallback
+            - id: order-route
+              uri: ${ORDER_SERVICE_URL:http://localhost:9002}/orders
+              predicates:
+                - Path=/orders/**
+              filters:
+                - name: CircuitBreaker
+                  args:
+                    name: orderCircuitBreaker
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        sliding-window-size: 20
+        permitted-number-of-calls-in-half-open-state: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15000
+  timelimiter:
+    configs:
+      default:
+        timeout-duration: 5s
+
+logging:
+  level:
+    "[io.github.resilience4j]": DEBUG
+
+  # security:
+  #   oauth2:
+  #     client:
+  #       registration:
+  #         keycloak:
+  #           client-id: edge-service
+  #           client-secret: polar-keycloak-secret
+  #           scope: openid
+  #       provider:Y
+  #         keycloak:
+  #           issuer-uri: ${KEYCLOAK_URL:http://localhost:8081}/realms/PolarBookshop
