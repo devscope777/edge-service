@@ -9,8 +9,18 @@ spring:
     name: edge-service
   lifecycle:
     timeout-per-shutdown-phase: 15s
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: edge-service
+            client-secret: polar-keycloak-secret
+            scope: openid,roles,email
+        provider:
+          keycloak:
+            issuer-uri: ${KEYCLOAK_URL:http://localhost:8081}/realms/PolarBookshop
   session:
-    store-type: redis
     timeout: 10m
     redis:
       namespace: polar:edge
@@ -27,6 +37,8 @@ spring:
           redis-rate-limiter:
             include-headers: false
           default-filters:
+            - name: SaveSession
+            - name: TokenRelay
             - name: RequestRateLimiter
               args:
                 redis-rate-limiter.replenishRate: 10
@@ -84,15 +96,3 @@ resilience4j:
 logging:
   level:
     "[io.github.resilience4j]": DEBUG
-
-  # security:
-  #   oauth2:
-  #     client:
-  #       registration:
-  #         keycloak:
-  #           client-id: edge-service
-  #           client-secret: polar-keycloak-secret
-  #           scope: openid
-  #       provider:Y
-  #         keycloak:
-  #           issuer-uri: ${KEYCLOAK_URL:http://localhost:8081}/realms/PolarBookshop

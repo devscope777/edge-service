@@ -1,41 +1,41 @@
-// package com.example.edge_service.controller;
+package com.example.edge_service.controller;
 
-// import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestController;
 
-// import com.example.edge_service.security.User;
+import com.example.edge_service.security.User;
 
-// import reactor.core.publisher.Mono;
+import reactor.core.publisher.Mono;
 
-// import java.util.List;
+import java.util.List;
 
-// import org.springframework.security.core.annotation.AuthenticationPrincipal;
-// import
-// org.springframework.security.core.context.ReactiveSecurityContextHolder;
-// import org.springframework.security.core.context.SecurityContext;
-// import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-// import org.springframework.web.bind.annotation.GetMapping;
+import org.slf4j.Logger;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
-// @RestController
-// public class UserController {
-// // @GetMapping("/user")
-// // public Mono<User> getUser() {
-// // return ReactiveSecurityContextHolder
-// // .getContext()
-// // .map(SecurityContext::getAuthentication)
-// // .map(auth -> (OidcUser) auth.getPrincipal())
-// // .map(oidc -> new User(
-// // oidc.getPreferredUsername(),
-// // oidc.getGivenName(),
-// // oidc.getFamilyName(),
-// // List.of("employee", "customer")));
-// // }
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.web.bind.annotation.GetMapping;
 
-// @GetMapping("/user")
-// public Mono<User> getUser(@AuthenticationPrincipal OidcUser oidcUser) {
-// return Mono.just(new User(
-// oidcUser.getPreferredUsername(),
-// oidcUser.getGivenName(),
-// oidcUser.getFamilyName(),
-// List.of("employee", "customer")));
-// }
-// }
+@RestController
+public class UserController {
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserController.class);
+    // @GetMapping("/user")
+    // public Mono<User> getUser() {
+    // return ReactiveSecurityContextHolder
+    // .getContext()
+    // .map(SecurityContext::getAuthentication)
+    // .map(auth -> (OidcUser) auth.getPrincipal())
+    // .map(oidc -> new User(
+    // oidc.getPreferredUsername(),
+    // oidc.getGivenName(),
+    // oidc.getFamilyName(),
+    // List.of("employee", "customer")));
+    // }
+
+    @GetMapping("/user")
+    public Mono<User> getUser(@AuthenticationPrincipal OidcUser oidcUser) {
+        return Mono.just(new User(
+                oidcUser.getPreferredUsername(),
+                oidcUser.getGivenName(),
+                oidcUser.getFamilyName(),
+                oidcUser.getClaimAsStringList("roles")));
+    }
+}
