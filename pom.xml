@@ -28,6 +28,7 @@
 	</scm>
 	<properties>
 		<java.version>17</java.version>
+		<register.username>user</register.username>
 	</properties>
 	<dependencies>
 
@@ -88,6 +89,22 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>${register.username}/${project.name}:${project.version}</name>
+						<publish>true</publish>
+						<env>
+							<BP_JVM_VERSION>${java.version}</BP_JVM_VERSION>
+						</env>
+					</image>
+					<docker>
+						<publishRegistry>
+							<username>${docker.publishRegistry.username}</username>
+							<password>${docker.publishRegistry.password}</password>
+							<url>${docker.publishRegistry.url}</url>
+						</publishRegistry>
+					</docker>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>

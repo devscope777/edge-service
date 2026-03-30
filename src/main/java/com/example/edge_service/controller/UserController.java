@@ -6,9 +6,6 @@ import com.example.edge_service.security.User;
 
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
-import org.slf4j.Logger;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
@@ -16,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 public class UserController {
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(UserController.class);
+
     // @GetMapping("/user")
     // public Mono<User> getUser() {
     // return ReactiveSecurityContextHolder

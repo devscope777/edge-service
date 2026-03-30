@@ -54,4 +54,5 @@ public class UserControllerTests {
             builder.claim("roles", expectedUser.roles());
         });
     }
+
 }
