@@ -20,6 +20,7 @@ jobs:
 
       - name: Verify and Build image
         run: >
+          chmod +x mvnw &&
           ./mvnw -B -U verify
           spring-boot:build-image
           -Dregister.username=${{ secrets.REGISTRY_USERNAME }}
