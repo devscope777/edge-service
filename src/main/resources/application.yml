@@ -26,10 +26,16 @@ spring:
       namespace: polar:edge
   data:
     redis:
-      connect-timeout: 2s
       host: localhost
       port: 6379
       timeout: 500ms
+      connect-timeout: 2s
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: user
+    password: password
+    connection-timeout: 5s
   config:
     import: "optional:configserver:"
   cloud:
@@ -99,6 +105,23 @@ resilience4j:
       default:
         timeout-duration: 5s
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: [health, prometheus, loggers]
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,redis
 logging:
   level:
-    "[io.github.resilience4j]": DEBUG
+    io:
+      github:
+        resilience4j: DEBUG
+    # "[io.github.resilience4j]": DEBUG

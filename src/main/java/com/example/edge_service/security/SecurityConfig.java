@@ -1,5 +1,6 @@
 package com.example.edge_service.security;
 
+import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,9 +16,6 @@ import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.HttpStatusServerEntryPoint;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
-import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
-
-import org.springframework.security.web.server.csrf.ServerCsrfTokenRequestAttributeHandler;
 import org.springframework.session.data.redis.config.annotation.web.server.EnableRedisWebSession;
 import org.springframework.web.server.WebFilter;
 
@@ -34,6 +32,7 @@ public class SecurityConfig {
         return http.authorizeExchange(exchange -> exchange
                 .pathMatchers("/", "/*.css", "/*.js", "favicon.ico").permitAll()
                 .pathMatchers(HttpMethod.GET, "/books/**").permitAll()
+                .matchers(EndpointRequest.toAnyEndpoint()).permitAll()
                 .anyExchange().authenticated())
                 .exceptionHandling(
                         exceptionHandling -> exceptionHandling

@@ -6,6 +6,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.redis.AutoConfigureDataRedis;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -18,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 @WebFluxTest
 @Import(SecurityConfig.class)
+@AutoConfigureDataRedis
 public class SecurityConfigTests {
 
     @Autowired
@@ -34,9 +36,11 @@ public class SecurityConfigTests {
         webclient
                 .mutateWith(mockOAuth2Login())
                 .mutateWith(csrf())
-                .post().uri("/logout")
+                .post()
+                .uri("/logout")
                 .exchange()
-                .expectStatus().isFound();
+                .expectStatus()
+                .isFound();
     }
 
     private ClientRegistration testClientRegistration() {

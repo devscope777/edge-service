@@ -3,24 +3,27 @@ package com.example.edge_service;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-
-import com.example.edge_service.security.SecurityConfig;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 public class EdgeServiceApplicationTests {
     private static final int REDIS_PORT = 6379;
 
+    @SuppressWarnings("resource")
     @Container
     static GenericContainer<?> redis = new GenericContainer<>(DockerImageName.parse("redis:latest"))
             .withExposedPorts(REDIS_PORT);
+
+    @MockitoBean
+    ReactiveClientRegistrationRepository clientRegistrationRepository;
 
     @DynamicPropertySource
     static void redisProperties(DynamicPropertyRegistry registry) {
@@ -29,7 +32,7 @@ public class EdgeServiceApplicationTests {
     }
 
     @Test
-    void contextLoads() {
+    void verifyThatSpringContextLoads() {
     }
 
     @AfterAll

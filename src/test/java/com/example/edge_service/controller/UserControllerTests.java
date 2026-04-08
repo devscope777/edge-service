@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.data.redis.AutoConfigureDataRedis;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
+
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.core.oidc.StandardClaimNames;
 import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers;
@@ -20,6 +22,7 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 @WebFluxTest(UserController.class)
 @Import(SecurityConfig.class)
+@AutoConfigureDataRedis
 public class UserControllerTests {
 
     @Autowired
