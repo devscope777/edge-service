@@ -119,6 +119,9 @@ management:
       group:
         readiness:
           include: readinessState,redis
+  metrics:
+    tags:
+      application: ${spring.application.name}
 logging:
   level:
     io:
