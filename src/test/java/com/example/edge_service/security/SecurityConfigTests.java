@@ -6,9 +6,9 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.data.redis.AutoConfigureDataRedis;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono;
 
 @WebFluxTest
 @Import(SecurityConfig.class)
-@AutoConfigureDataRedis
 public class SecurityConfigTests {
 
     @Autowired
@@ -27,6 +26,9 @@ public class SecurityConfigTests {
 
     @MockitoBean
     ReactiveClientRegistrationRepository clientRegistrationRepository;
+
+    @MockitoBean
+    ReactiveRedisConnectionFactory redis;
 
     @Test
     void whenLogoutAuthenticatedAndWithCsrfTokenThen302() {
